@@ -143,6 +143,7 @@ DimDate ────────────────────────
 # 💡 Dashboard Overview — 4 Pages
 
 ---
+<img width="1150" height="629" alt="image" src="https://github.com/user-attachments/assets/072ab817-c930-4e7c-a537-d9ec67a9d414" />
 
 ## 🏠 Page 1 — Executive View
 
@@ -163,6 +164,7 @@ DimDate ────────────────────────
 **Slicers:** Year · CouncilArea · Region · Suburb
 
 ---
+<img width="1148" height="628" alt="MoM Trend analysis" src="https://github.com/user-attachments/assets/32c7fe98-8bd7-419e-b733-68c67babbb25" />
 
 ## 📈 Page 2 — MoM Trend Analysis
 
@@ -181,6 +183,7 @@ DimDate ────────────────────────
 **Slicers:** Year · CouncilArea · Region · Suburb
 
 ---
+<img width="1145" height="622" alt="image" src="https://github.com/user-attachments/assets/535ce796-98e6-4941-9bd4-de98b7cd2140" />
 
 ## 📊 Page 3 — Pareto Analysis
 
@@ -198,6 +201,7 @@ DimDate ────────────────────────
 **Slicers:** Year · CouncilArea · Region · Suburb
 
 ---
+<img width="1147" height="627" alt="Strategic_insights" src="https://github.com/user-attachments/assets/3f0e8fd8-3de9-4156-8209-ee77f35842c3" />
 
 ## 🗺️ Page 4 — Strategic Insights Analysis
 
