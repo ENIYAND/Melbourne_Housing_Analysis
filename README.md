@@ -360,7 +360,7 @@ Melbourne_Housing_Analysis/
 │   ├── melb_clean.csv              ← 13,580 rows × 32 cols (clean dataset)
 │   └── melb_suburb_summary.csv     ← 314 suburb-level aggregations
 ├── powerbi/
-│   └── Melbourne_Dashboard.pbix    ← Power BI dashboard file
+│   └── Melbourne_analysis.pbix    ← Power BI dashboard file
 └── README.md                       ← This file
 ```
 
