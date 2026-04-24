@@ -1,0 +1,177 @@
+================================================================================
+SQL ASSESSMENT - DATA ANALYST POSITION
+================================================================================
+
+Instructions:
+- Write your SQL queries directly below each question
+- You may use any SQL dialect (PostgreSQL, MySQL, SQL Server, etc.)
+- Refer to melb_data.json for the table schema
+- Assume the data is loaded in a table named: melb_data
+
+================================================================================
+
+
+--------------------------------------------------------------------------------
+QUESTION 1
+--------------------------------------------------------------------------------
+
+Find all properties priced above their suburb's average price.
+
+Your query should return the relevant property details along with the suburb 
+average for comparison.
+
+
+-- Write your answer below this line:
+
+WITH suburb_pricing AS (
+    SELECT
+        Suburb,
+        Address,
+        Rooms,
+        Type,
+        Price,
+        Method,
+        SellerG,
+        Date,
+        Regionname,
+	ROUND(AVG(Price) OVER (PARTITION BY Suburb),2) AS suburb_avg_price,
+	ROUND(Price - AVG(Price) OVER (PARTITION BY Suburb), 2) AS price_above_avg,
+	ROUND((Price - AVG(Price) OVER (PARTITION BY Suburb)* 100.0 / NULLIF(AVG(Price) OVER (PARTITION BY Suburb), 0), 2) AS pct_premium_over_avg
+    FROM assessment_melb
+    WHERE Price IS NOT NULL               
+)      
+
+
+SELECT *
+FROM suburb_pricing
+WHERE Price > suburb_avg_price
+ORDER BY Suburb ASC, pct_premium_over_avg DESC;  
+
+
+
+
+
+--------------------------------------------------------------------------------
+QUESTION 2
+--------------------------------------------------------------------------------
+
+Compare each suburb's first sale price to its last sale price.
+
+Your query should identify the earliest and latest sales per suburb and compute 
+the price difference or percentage change.
+
+
+-- Write your answer below this line:
+
+WITH ranked_sales AS (
+    SELECT
+        Suburb,
+        Address,
+        Price,
+        Date,
+        ROW_NUMBER() OVER (PARTITION BY Suburb ORDER BY Date ASC, Price DESC) AS rn_asc,
+        ROW_NUMBER() OVER ( PARTITION BY Suburb ORDER BY Date DESC, Price DESC) AS rn_desc
+    FROM assessment_melb
+    WHERE Price IS NOT NULL
+    
+),
+
+first_sales AS (
+    SELECT
+        Suburb,
+        Price       AS first_price,
+        Date        AS first_sale_date,
+        Address     AS first_address
+    FROM ranked_sales
+    WHERE rn_asc = 1
+),
+
+last_sales AS (
+    SELECT
+        Suburb,
+        Price       AS last_price,
+        Date        AS last_sale_date,
+        Address     AS last_address
+    FROM ranked_sales
+    WHERE rn_desc = 1
+)
+
+SELECT
+    f.Suburb,
+    f.first_sale_date,
+    f.first_price,
+    l.last_sale_date,
+    l.last_price,
+    ROUND(l.last_price - f.first_price, 2) AS price_change,
+    ROUND((l.last_price - f.first_price) * 100.0/ NULLIF(f.first_price, 0), 2) AS pct_change,
+    CASE
+        WHEN l.last_price > f.first_price THEN 'Appreciated'
+        WHEN l.last_price < f.first_price THEN 'Declined'
+        ELSE                                   'No Change'
+    END  AS price_direction
+
+FROM first_sales  f
+JOIN last_sales   l ON f.Suburb = l.Suburb
+ORDER BY pct_change DESC;
+
+
+
+--------------------------------------------------------------------------------
+QUESTION 3
+--------------------------------------------------------------------------------
+
+For each region, find the top 5 real estate agents by total revenue.
+
+Your query should rank agents within each region based on their cumulative sales 
+value and return the top 5 per region.
+
+
+-- Write your answer below this line:
+
+
+WITH agent_revenue AS (
+    SELECT
+        Regionname,
+        SellerG,
+        COUNT(*)            AS total_transactions,
+        SUM(Price)          AS total_revenue,
+        ROUND(AVG(Price),2) AS avg_sale_price
+
+    FROM assessment_melb
+    WHERE Price      IS NOT NULL
+      AND Regionname IS NOT NULL
+      AND SellerG    IS NOT NULL
+
+    GROUP BY Regionname, SellerG
+),
+
+ranked_agents AS (
+    SELECT
+        Regionname,
+        SellerG,
+        total_transactions,
+        total_revenue,
+        avg_sale_price,
+        ROUND(total_revenue * 100.0 / NULLIF(SUM(total_revenue) OVER (PARTITION BY Regionname), 0),2 ) AS market_share_pct,
+        DENSE_RANK() OVER (PARTITION BY Regionname ORDER BY total_revenue DESC) AS revenue_rank
+    FROM agent_revenue   
+)
+
+SELECT
+    Regionname,
+    revenue_rank,
+    SellerG,
+    total_transactions,
+    total_revenue,
+    avg_sale_price,
+    market_share_pct
+FROM ranked_agents
+WHERE revenue_rank <= 5
+ORDER BY Regionname ASC, revenue_rank ASC;
+
+
+
+
+================================================================================
+END OF ASSESSMENT
+================================================================================
