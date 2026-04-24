@@ -352,11 +352,11 @@ All insights follow the DA framework: **Finding → Decision → Who Acts → Ri
 # 📁 Repository Structure
 
 ```
-melbourne-housing-assessment/
+Melbourne_Housing_Analysis/
 ├── sql/
 │   └── sql_assessment.txt          ← 3 SQL queries with window functions
 ├── python/
-│   ├── Melbourne_Analysis.ipynb    ← Full EDA and feature engineering notebook
+│   ├── Melbourne_Housing_Analysis.ipynb    ← Full EDA and feature engineering notebook
 │   ├── melb_clean.csv              ← 13,580 rows × 32 cols (clean dataset)
 │   └── melb_suburb_summary.csv     ← 314 suburb-level aggregations
 ├── powerbi/
